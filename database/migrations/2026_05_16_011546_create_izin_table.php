@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('izin', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('siswa_id')->constrained('siswa')->onDelete('cascade');
+            $table->foreignId('disetujui_oleh')->constrained('users')->onDelete('cascade');
+            $table->date('tanggal_mulai');
+            $table->date('tanggal_selesai');
+            $table->string('alasan');
+            $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
+            $table->string('lampiran');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('izin');
+    }
+};
