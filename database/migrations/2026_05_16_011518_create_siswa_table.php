@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('nama_lengkap');
             $table->string('jenis_kelamin');
             $table->timestamps();
-        });
+       });
     }
 
     /**

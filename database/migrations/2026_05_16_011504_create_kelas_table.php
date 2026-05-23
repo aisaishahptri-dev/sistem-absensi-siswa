@@ -17,8 +17,7 @@ return new class extends Migration
             $table->string('tingkat');
             $table->foreignId('wali_kelas_id')->constrained('users')->onDelete('cascade');
             $table->string('tahun_ajaran');
-            $table->timestamps();
-        });
+            $table->timestamps();});
     }
 
     /**
