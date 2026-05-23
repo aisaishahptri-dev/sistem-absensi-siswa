@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('kelas', function (Blueprint $table) {
             $table->id();
             $table->string('nama_kelas');
-            $table->string('tingkat');
+            $table->string('tingkat')->default('X');
             $table->foreignId('wali_kelas_id')->constrained('users')->onDelete('cascade');
             $table->string('tahun_ajaran');
             $table->timestamps();});
