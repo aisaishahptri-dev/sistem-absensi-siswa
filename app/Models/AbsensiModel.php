@@ -1,4 +1,5 @@
 <?php
+// app/Models/AbsensiModel.php
 
 namespace App\Models;
 
@@ -7,15 +8,27 @@ use Illuminate\Database\Eloquent\Model;
 class AbsensiModel extends Model
 {
     protected $table = 'absensi';
-    protected $primaryKey = 'id_absensi';
     protected $fillable = [
-        'id_siswa',
+        'siswa_id',
+        'jadwal_id',
+        'dicatat_oleh',
         'tanggal',
         'status',
+        'keterangan',
     ];
 
     public function siswa()
     {
-        return $this->belongsTo(SiswaModel::class, 'id_siswa', 'id_siswa');
+        return $this->belongsTo(SiswaModel::class, 'siswa_id', 'id');
+    }
+
+    public function jadwal()
+    {
+        return $this->belongsTo(JadwalModel::class, 'jadwal_id', 'id');
+    }
+
+    public function dicatatOleh()
+    {
+        return $this->belongsTo(User::class, 'dicatat_oleh', 'id');
     }
 }

@@ -1,4 +1,5 @@
 <?php
+// app/Models/User.php
 
 namespace App\Models;
 
@@ -10,7 +11,6 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role', // Tambahkan role
     ];
 
     /**
@@ -45,5 +46,21 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Relasi
+    public function kelasWali()
+    {
+        return $this->hasMany(Kelas::class, 'wali_kelas_id');
+    }
+
+    public function jadwalMengajar()
+    {
+        return $this->hasMany(Jadwal::class, 'guru_id');
+    }
+
+    public function siswa()
+    {
+        return $this->hasOne(Siswa::class, 'user_id');
     }
 }

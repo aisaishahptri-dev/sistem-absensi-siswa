@@ -1,4 +1,5 @@
 <?php
+// app/Models/JadwalModel.php
 
 namespace App\Models;
 
@@ -7,10 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class JadwalModel extends Model
 {
     protected $table = 'jadwal';
-    protected $primaryKey = 'id_jadwal';
+    protected $primaryKey = 'id'; // Perbaiki: sesuai migration
     protected $fillable = [
-        'id_kelas',
-        'id_guru',
+        'kelas_id',        // Perbaiki: sesuai migration
+        'guru_id',         // Perbaiki: sesuai migration
+        'mata_pelajaran',
         'hari',
         'jam_mulai',
         'jam_selesai',
@@ -18,11 +20,16 @@ class JadwalModel extends Model
 
     public function kelas()
     {
-        return $this->belongsTo(KelasModel::class, 'id_kelas', 'id_kelas');
+        return $this->belongsTo(KelasModel::class, 'kelas_id', 'id');
     }
 
     public function guru()
     {
-        return $this->belongsTo(GuruModel::class, 'id_guru', 'id_guru');
+        return $this->belongsTo(User::class, 'guru_id', 'id');
+    }
+
+    public function absensi()
+    {
+        return $this->hasMany(AbsensiModel::class, 'jadwal_id', 'id');
     }
 }
