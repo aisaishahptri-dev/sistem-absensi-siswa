@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('izin', function (Blueprint $table) {
             $table->id();
             $table->foreignId('siswa_id')->constrained('siswa')->onDelete('cascade');
-            $table->foreignId('disetujui_oleh')->constrained('users')->onDelete('cascade');
+            $table->foreignId('disetujui_oleh')->nullable()->constrained('users')->onDelete('cascade');
             $table->date('tanggal_mulai');
             $table->date('tanggal_selesai');
             $table->string('alasan');
             $table->enum('status', ['pending', 'disetujui', 'ditolak'])->default('pending');
-            $table->string('lampiran');
+            $table->string('lampiran')->nullable();
             $table->timestamps();
         });
     }

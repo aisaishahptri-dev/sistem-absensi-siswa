@@ -1,4 +1,5 @@
 <?php
+// database/seeders/JadwalSeeder.php
 
 namespace Database\Seeders;
 
@@ -15,28 +16,54 @@ class JadwalSeeder extends Seeder
     {
         DB::table('jadwal')->insert([
             [
+                'kelas_id' => 1,              // X IPA 1
+                'guru_id' => 2,               // Guru ID 2
+                'mata_pelajaran' => 'Matematika',
                 'hari' => 'Senin',
                 'jam_mulai' => '08:00:00',
-                'jam_selesai' => '10:00:00',
-                'mata_pelajaran' => 'Matematika',
-                'guru_id' => 2, // Assuming the guru user has ID 2
-                'kelas_id' => 1, // Assuming the kelas has ID 1
+                'jam_selesai' => '09:30:00',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'hari' => 'Selasa',
-                'jam_mulai' => '10:00:00',
-                'jam_selesai' => '12:00:00',
+                'kelas_id' => 1,
+                'guru_id' => 2,
                 'mata_pelajaran' => 'Bahasa Indonesia',
-                'guru_id' => 2, // Assuming the guru user has ID 2
-                'kelas_id' => 1, // Assuming the kelas has ID 1
+                'hari' => 'Selasa',
+                'jam_mulai' => '08:00:00',
+                'jam_selesai' => '09:30:00',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'hari' => 'Rabu',
-                'jam_mulai' => '13:00:00',
-                'jam_selesai' => '15:00:00',
+                'kelas_id' => 1,
+                'guru_id' => 2,
                 'mata_pelajaran' => 'Bahasa Inggris',
-                'guru_id' => 2, // Assuming the guru user has ID 2
-                'kelas_id' => 1, // Assuming the kelas has ID 1
+                'hari' => 'Rabu',
+                'jam_mulai' => '08:00:00',
+                'jam_selesai' => '09:30:00',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kelas_id' => 2,
+                'guru_id' => 2,
+                'mata_pelajaran' => 'Matematika',
+                'hari' => 'Senin',
+                'jam_mulai' => '10:00:00',
+                'jam_selesai' => '11:30:00',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'kelas_id' => 3,
+                'guru_id' => 2,
+                'mata_pelajaran' => 'Ekonomi',
+                'hari' => 'Senin',
+                'jam_mulai' => '13:00:00',
+                'jam_selesai' => '14:30:00',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
         ]);
     }

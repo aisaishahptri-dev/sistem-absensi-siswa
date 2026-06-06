@@ -1,4 +1,5 @@
 <?php
+// database/seeders/SiswaSeeder.php
 
 namespace Database\Seeders;
 
@@ -15,25 +16,31 @@ class SiswaSeeder extends Seeder
     {
         DB::table('siswa')->insert([
             [
-                'nama_lengkap' => 'Ahmad Fauzi',
-                'kelas_id' => 1,
-                'user_id' => 3, // Assuming the siswa user has ID 3
+                'user_id' => 3,      // Sesuai dengan user siswa1
+                'kelas_id' => 1,     // X IPA 1
                 'nis' => '1234567890',
-                'jenis_kelamin' => 'Laki-laki',
+                'nama_lengkap' => 'Ahmad Fauzi',
+                'jenis_kelamin' => 'L',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'nama_lengkap' => 'Budi Santoso',
-                'kelas_id' => 2,
-                'user_id' => 4, // Assuming the siswa user has ID 4
+                'user_id' => 4,      // Sesuai dengan user siswa2
+                'kelas_id' => 2,     // X IPA 2
                 'nis' => '0987654321',
-                'jenis_kelamin' => 'Laki-laki',
+                'nama_lengkap' => 'Citra Lestari',
+                'jenis_kelamin' => 'P',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'nama_lengkap' => 'Citra Lestari',
-                'kelas_id' => 3,
-                'user_id' => 5, // Assuming the siswa user has ID 5
+                'user_id' => 5,      // Sesuai dengan user siswa3
+                'kelas_id' => 3,     // X IPS 1
                 'nis' => '1122334455',
-                'jenis_kelamin' => 'Perempuan',
+                'nama_lengkap' => 'Dewi Sartika',
+                'jenis_kelamin' => 'P',
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
         ]);
     }
