@@ -52,8 +52,12 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                        <x-dropdown-link>
+                            @if(Route::has('profile.edit'))
+                                <a href="{{ route('profile.edit') }}">
+                                    {{ __('Profile') }}
+                                </a>
+                            @endif
                         </x-dropdown-link>
 
                         <!-- Authentication -->

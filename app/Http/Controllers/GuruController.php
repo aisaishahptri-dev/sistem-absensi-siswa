@@ -25,7 +25,7 @@ class GuruController extends Controller
         $kelas = KelasModel::where('wali_kelas_id', $guru->id)->first();
         
         if (!$kelas) {
-            return view('guru.dashboard', ['kelas' => null]);
+            return view('guru.dashboard', compact('kelas'));
         }
         
         // Statistik kelas
@@ -44,21 +44,9 @@ class GuruController extends Controller
             $q->where('kelas_id', $kelas->id);
         })->where('status', 'pending')->count();
         
-        // Grafik kehadiran 7 hari terakhir
-        $grafikKehadiran = [];
-        for ($i = 6; $i >= 0; $i--) {
-            $tanggal = Carbon::today()->subDays($i);
-            $grafikKehadiran[] = [
-                'tanggal' => $tanggal->format('d/m'),
-                'hadir' => AbsensiModel::whereHas('siswa', function($q) use ($kelas) {
-                    $q->where('kelas_id', $kelas->id);
-                })->whereDate('tanggal', $tanggal)->count(),
-            ];
-        }
-        
         return view('guru.dashboard', compact(
             'kelas', 'totalSiswa', 'absenHariIni', 
-            'persenKehadiran', 'izinPending', 'grafikKehadiran'
+            'persenKehadiran', 'izinPending'
         ));
     }
     
@@ -70,11 +58,15 @@ class GuruController extends Controller
         $guru = Auth::user();
         $kelas = KelasModel::with('siswa')->where('wali_kelas_id', $guru->id)->first();
         
+        if (!$kelas) {
+            return redirect()->route('guru.dashboard')->with('error', 'Anda belum ditugaskan sebagai wali kelas');
+        }
+        
         return view('guru.kelas', compact('kelas'));
     }
     
     /**
-     * Form Absensi (Input Absensi)
+     * Form Absensi
      */
     public function formAbsensi(Request $request)
     {
@@ -95,8 +87,10 @@ class GuruController extends Controller
                 ->first();
         }
         
+        // Cek jadwal untuk hari ini
+        $hariIndo = $this->getHariIndonesia($tanggal);
         $jadwal = JadwalModel::where('kelas_id', $kelas->id)
-            ->where('hari', $this->getHari($tanggal))
+            ->where('hari', $hariIndo)
             ->first();
         
         return view('guru.absensi', compact('kelas', 'siswa', 'tanggal', 'jadwal'));
@@ -110,7 +104,7 @@ class GuruController extends Controller
         $request->validate([
             'tanggal' => 'required|date',
             'absensi' => 'required|array',
-            'absensi.*' => 'in:hadir,sakit,izin,alpha',
+            'absensi.*' => 'in:hadir,sakit,izin,alpa',
         ]);
         
         $guru = Auth::user();
@@ -121,10 +115,12 @@ class GuruController extends Controller
                 ->whereDate('tanggal', $request->tanggal)
                 ->first();
             
+            $keterangan = $request->keterangan[$siswa_id] ?? null;
+            
             if ($cek) {
                 $cek->update([
                     'status' => $status,
-                    'keterangan' => $request->keterangan[$siswa_id] ?? null,
+                    'keterangan' => $keterangan,
                     'dicatat_oleh' => $guru->id
                 ]);
             } else {
@@ -132,20 +128,20 @@ class GuruController extends Controller
                     'siswa_id' => $siswa_id,
                     'tanggal' => $request->tanggal,
                     'status' => $status,
-                    'keterangan' => $request->keterangan[$siswa_id] ?? null,
+                    'keterangan' => $keterangan,
                     'jadwal_id' => $request->jadwal_id,
                     'dicatat_oleh' => $guru->id
                 ]);
             }
         }
         
-        return redirect()->route('guru.absensi')->with('success', 'Absensi berhasil disimpan');
+        return redirect()->route('guru.kelas')->with('success', 'Absensi berhasil disimpan');
     }
     
     /**
-     * Verifikasi Izin Siswa
+     * Lihat Izin Siswa
      */
-    public function izin()
+    public function izin(Request $request)
     {
         $guru = Auth::user();
         $kelas = KelasModel::where('wali_kelas_id', $guru->id)->first();
@@ -156,16 +152,20 @@ class GuruController extends Controller
         
         $siswaIds = SiswaModel::where('kelas_id', $kelas->id)->pluck('id');
         
-        $izin = IzinModel::with('siswa')
-            ->whereIn('siswa_id', $siswaIds)
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        $query = IzinModel::with('siswa')->whereIn('siswa_id', $siswaIds);
+        
+        // Filter status
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+        
+        $izin = $query->orderBy('created_at', 'desc')->paginate(10);
         
         return view('guru.izin', compact('izin', 'kelas'));
     }
     
     /**
-     * Verifikasi Izin (Approve/Reject)
+     * Verifikasi Izin
      */
     public function verifikasiIzin($id, $status)
     {
@@ -179,22 +179,26 @@ class GuruController extends Controller
         $izin->update([
             'status' => $status,
             'disetujui_oleh' => Auth::id(),
-            'tanggal_disetujui' => now()
         ]);
         
-        // Jika disetujui, otomatis catat absensi
+        // Jika disetujui, catat absensi untuk rentang tanggal
         if ($status == 'disetujui') {
-            AbsensiModel::updateOrCreate(
-                [
-                    'siswa_id' => $izin->siswa_id,
-                    'tanggal' => $izin->tanggal
-                ],
-                [
-                    'status' => 'izin',
-                    'keterangan' => $izin->keterangan,
-                    'dicatat_oleh' => Auth::id()
-                ]
-            );
+            $startDate = Carbon::parse($izin->tanggal_mulai);
+            $endDate = Carbon::parse($izin->tanggal_selesai);
+            
+            for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
+                AbsensiModel::updateOrCreate(
+                    [
+                        'siswa_id' => $izin->siswa_id,
+                        'tanggal' => $date->format('Y-m-d')
+                    ],
+                    [
+                        'status' => 'izin',
+                        'keterangan' => $izin->alasan,
+                        'dicatat_oleh' => Auth::id()
+                    ]
+                );
+            }
         }
         
         $message = $status == 'disetujui' ? 'Izin disetujui' : 'Izin ditolak';
@@ -202,48 +206,19 @@ class GuruController extends Controller
     }
     
     /**
-     * Laporan Kelas yang Diampu
+     * Helper: Konversi tanggal ke hari Indonesia
      */
-    public function laporanKelas(Request $request)
+    private function getHariIndonesia($tanggal)
     {
-        $guru = Auth::user();
-        $kelas = KelasModel::where('wali_kelas_id', $guru->id)->first();
-        
-        if (!$kelas) {
-            return redirect()->route('guru.dashboard')->with('error', 'Anda belum ditugaskan sebagai wali kelas');
-        }
-        
-        $bulan = $request->bulan ?? date('m');
-        $tahun = $request->tahun ?? date('Y');
-        
-        $siswa = SiswaModel::where('kelas_id', $kelas->id)->get();
-        
-        // Rekap absensi per siswa
-        $rekapAbsensi = [];
-        foreach ($siswa as $s) {
-            $absensi = AbsensiModel::where('siswa_id', $s->id)
-                ->whereYear('tanggal', $tahun)
-                ->whereMonth('tanggal', $bulan)
-                ->get();
-            
-            $rekapAbsensi[] = [
-                'siswa' => $s,
-                'hadir' => $absensi->where('status', 'hadir')->count(),
-                'sakit' => $absensi->where('status', 'sakit')->count(),
-                'izin' => $absensi->where('status', 'izin')->count(),
-                'alpha' => $absensi->where('status', 'alpha')->count(),
-                'total' => $absensi->count()
-            ];
-        }
-        
-        return view('guru.laporan', compact('kelas', 'rekapAbsensi', 'bulan', 'tahun'));
-    }
-    
-    private function getHari($tanggal)
-    {
-        $hari = ['Sunday' => 'Minggu', 'Monday' => 'Senin', 'Tuesday' => 'Selasa', 
-                 'Wednesday' => 'Rabu', 'Thursday' => 'Kamis', 'Friday' => 'Jumat', 
-                 'Saturday' => 'Sabtu'];
+        $hari = [
+            'Sunday' => 'Minggu',
+            'Monday' => 'Senin',
+            'Tuesday' => 'Selasa',
+            'Wednesday' => 'Rabu',
+            'Thursday' => 'Kamis',
+            'Friday' => 'Jumat',
+            'Saturday' => 'Sabtu'
+        ];
         return $hari[date('l', strtotime($tanggal))];
     }
-}
+}       
