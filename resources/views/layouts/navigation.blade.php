@@ -1,128 +1,117 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu -->
+<nav x-data="{ open: false }" class="bg-navy shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
-                <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="
-                        @if(auth()->user()->role == 'admin')
-                            /admin/dashboard
-                        @elseif(auth()->user()->role == 'guru')
-                            /guru/dashboard
-                        @else
-                            /siswa/dashboard
-                        @endif
-                        ">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                    <a href="{{ 
+                        auth()->user()->role == 'admin' ? route('admin.dashboard') : 
+                        (auth()->user()->role == 'guru' ? route('guru.dashboard') : 
+                        route('siswa.dashboard')) 
+                    }}" class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="text-2xl">📚</span>
+                        <span>Absensi Sekolah</span>
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link href="
+                    @auth
                         @if(auth()->user()->role == 'admin')
-                            /admin/dashboard
+                            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.dashboard') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                📊 Dashboard
+                            </a>
+                            <a href="{{ route('admin.siswa') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.siswa*') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                👨‍🎓 Siswa
+                            </a>
+                            <a href="{{ route('admin.guru') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.guru*') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                👨‍🏫 Guru
+                            </a>
+                            <a href="{{ route('admin.kelas') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.kelas*') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                🏫 Kelas
+                            </a>
+                            <a href="{{ route('admin.jadwal') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.jadwal*') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                📅 Jadwal
+                            </a>
+                            <a href="{{ route('admin.laporan') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('admin.laporan*') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                📊 Laporan
+                            </a>
                         @elseif(auth()->user()->role == 'guru')
-                            /guru/dashboard
-                        @else
-                            /siswa/dashboard
+                            <a href="{{ route('guru.dashboard') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('guru.dashboard') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                📊 Dashboard
+                            </a>
+                            <a href="{{ route('guru.kelas') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('guru.kelas') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                🏫 Kelas Saya
+                            </a>
+                            <a href="{{ route('guru.absensi') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('guru.absensi') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                📝 Absensi
+                            </a>
+                            <a href="{{ route('guru.izin') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('guru.izin') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                📋 Izin Siswa
+                            </a>
+                        @elseif(auth()->user()->role == 'siswa')
+                            <a href="{{ route('siswa.dashboard') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('siswa.dashboard') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                📊 Dashboard
+                            </a>
+                            <a href="{{ route('siswa.absensi') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('siswa.absensi') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                📋 Rekap Absensi
+                            </a>
+                            <a href="{{ route('siswa.izin.form') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('siswa.izin.form') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                📄 Ajukan Izin
+                            </a>
+                            <a href="{{ route('siswa.riwayat-izin') }}" class="inline-flex items-center px-1 pt-1 border-b-2 {{ request()->routeIs('siswa.riwayat-izin') ? 'border-white text-white' : 'border-transparent text-gray-300 hover:text-white hover:border-gray-300' }} text-sm font-medium transition">
+                                📜 Riwayat Izin
+                            </a>
                         @endif
-                        ">
-                            Dashboard
-                    </x-nav-link>
+                    @endauth
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-dropdown align="right" width="48">
-                    <x-slot name="trigger">
-                        <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div>
-                                {{ Auth::user()->name }} ({{ Auth::user()->role }})
-                            </div>
-
-                            <div class="ms-1">
-                                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </button>
-                    </x-slot>
-
-                    <x-slot name="content">
-                        <x-dropdown-link>
-                            @if(Route::has('profile.edit'))
-                                <a href="{{ route('profile.edit') }}">
-                                    {{ __('Profile') }}
-                                </a>
-                            @endif
-                        </x-dropdown-link>
-
-                        <!-- Authentication -->
+                <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                    <button @click="open = !open" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 rounded-full px-4 py-2 transition text-white">
+                        <div class="w-8 h-8 rounded-full bg-baby-blue flex items-center justify-center text-navy text-sm font-bold">
+                            {{ substr(auth()->user()->name, 0, 1) }}
+                        </div>
+                        <span class="text-sm font-medium text-white">{{ auth()->user()->name }}</span>
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <div x-show="open" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50" style="display: none;">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-
-                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                {{ __('Log Out') }}
-                            </button>
-
+                            <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition">🚪 Logout</button>
                         </form>
-                    </x-slot>
-                </x-dropdown>
+                    </div>
+                </div>
             </div>
 
-            <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                <button @click="open = !open" class="p-2 rounded-md text-gray-300 hover:text-white hover:bg-white/10">
+                    <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+    <div x-show="open" class="sm:hidden bg-navy border-t border-white/10" style="display: none;">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link href="
+            @auth
                 @if(auth()->user()->role == 'admin')
-                    /admin/dashboard
+                    <a href="{{ route('admin.dashboard') }}" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/10">📊 Dashboard</a>
+                    <a href="{{ route('admin.siswa') }}" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/10">👨‍🎓 Siswa</a>
+                    <a href="{{ route('admin.guru') }}" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/10">👨‍🏫 Guru</a>
+                    <a href="{{ route('admin.kelas') }}" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/10">🏫 Kelas</a>
+                    <a href="{{ route('admin.jadwal') }}" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/10">📅 Jadwal</a>
                 @elseif(auth()->user()->role == 'guru')
-                    /guru/dashboard
-                @else
-                    /siswa/dashboard
+                    <a href="{{ route('guru.dashboard') }}" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/10">📊 Dashboard</a>
+                    <a href="{{ route('guru.kelas') }}" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/10">🏫 Kelas Saya</a>
+                    <a href="{{ route('guru.absensi') }}" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/10">📝 Absensi</a>
+                    <a href="{{ route('guru.izin') }}" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/10">📋 Izin Siswa</a>
+                @elseif(auth()->user()->role == 'siswa')
+                    <a href="{{ route('siswa.dashboard') }}" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/10">📊 Dashboard</a>
+                    <a href="{{ route('siswa.absensi') }}" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/10">📋 Rekap Absensi</a>
+                    <a href="{{ route('siswa.izin.form') }}" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/10">📄 Ajukan Izin</a>
+                    <a href="{{ route('siswa.riwayat-izin') }}" class="block px-3 py-2 text-base font-medium text-gray-300 hover:text-white hover:bg-white/10">📜 Riwayat Izin</a>
                 @endif
-            " :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
-        </div>
-
-        <!-- Responsive Settings Options -->
-        <div class="pt-4 pb-1 border-t border-gray-200">
-            <div class="px-4">
-                <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>
-                <div class="font-medium text-sm text-gray-500">{{ Auth::user()->email }}</div>
-            </div>
-
-            <div class="mt-3 space-y-1">
-                <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
-                </x-responsive-nav-link>
-
-                <!-- Authentication -->
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-
-                    <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        {{ __('Log Out') }} 
-                    </button>
-                    
-                </form>
-            </div>
+            @endauth
         </div>
     </div>
 </nav>

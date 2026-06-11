@@ -25,8 +25,8 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     
-    // Manajemen Siswa
-    Route::get('/siswa', [AdminController::class, 'siswaIndex'])->name('siswa');
+    // Manajemen Siswa - Method di controller adalah 'siswa', 'siswaCreate', dll
+    Route::get('/siswa', [AdminController::class, 'siswa'])->name('siswa');  // ← bukan siswaIndex
     Route::get('/siswa/create', [AdminController::class, 'siswaCreate'])->name('siswa.create');
     Route::post('/siswa', [AdminController::class, 'siswaStore'])->name('siswa.store');
     Route::get('/siswa/{id}/edit', [AdminController::class, 'siswaEdit'])->name('siswa.edit');
@@ -34,16 +34,30 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('/siswa/{id}', [AdminController::class, 'siswaDestroy'])->name('siswa.destroy');
     
     // Manajemen Guru
-    Route::get('/guru', [AdminController::class, 'guruIndex'])->name('guru');
+    Route::get('/guru', [AdminController::class, 'guru'])->name('guru');
     Route::get('/guru/create', [AdminController::class, 'guruCreate'])->name('guru.create');
     Route::post('/guru', [AdminController::class, 'guruStore'])->name('guru.store');
     Route::delete('/guru/{id}', [AdminController::class, 'guruDestroy'])->name('guru.destroy');
     
     // Manajemen Kelas
-    Route::get('/kelas', [AdminController::class, 'kelasIndex'])->name('kelas');
+    Route::get('/kelas', [AdminController::class, 'kelas'])->name('kelas');
     Route::get('/kelas/create', [AdminController::class, 'kelasCreate'])->name('kelas.create');
     Route::post('/kelas', [AdminController::class, 'kelasStore'])->name('kelas.store');
+    Route::get('/kelas/{id}/edit', [AdminController::class, 'kelasEdit'])->name('kelas.edit');
+    Route::put('/kelas/{id}', [AdminController::class, 'kelasUpdate'])->name('kelas.update');
     Route::delete('/kelas/{id}', [AdminController::class, 'kelasDestroy'])->name('kelas.destroy');
+    
+    // Manajemen Jadwal
+    Route::get('/jadwal', [AdminController::class, 'jadwal'])->name('jadwal');
+    Route::get('/jadwal/create', [AdminController::class, 'jadwalCreate'])->name('jadwal.create');
+    Route::post('/jadwal', [AdminController::class, 'jadwalStore'])->name('jadwal.store');
+    Route::get('/jadwal/{id}/edit', [AdminController::class, 'jadwalEdit'])->name('jadwal.edit');
+    Route::put('/jadwal/{id}', [AdminController::class, 'jadwalUpdate'])->name('jadwal.update');
+    Route::delete('/jadwal/{id}', [AdminController::class, 'jadwalDestroy'])->name('jadwal.destroy');
+    
+    // Laporan
+    Route::get('/laporan', [AdminController::class, 'laporan'])->name('laporan');
+    Route::get('/laporan/kelas/{id}', [AdminController::class, 'laporanKelas'])->name('laporan.kelas');
 });
 
 // ==================== ROUTE GURU ====================

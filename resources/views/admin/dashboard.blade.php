@@ -1,44 +1,52 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Dashboard Admin
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-2xl text-navy leading-tight">📊 Dashboard Administrator</h2>
+            <span class="text-sm text-gray-500">{{ now()->format('l, d F Y') }}</span>
+        </div>
     </x-slot>
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white p-6 shadow rounded-lg">
-                <h3 class="text-lg font-bold mb-2">Halo, {{ auth()->user()->name }}! 👋</h3>
-                <p class="text-gray-600">Kamu login sebagai <b>Administrator</b></p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                <div class="bg-blue-500 text-white p-4 rounded-lg shadow">
-                    <p class="text-sm">Total Siswa</p>
-                    <h2 class="text-3xl font-bold">{{ $totalSiswa ?? 0 }}</h2>
-                </div>
-
-                <div class="bg-green-500 text-white p-4 rounded-lg shadow">
-                    <p class="text-sm">Total Guru</p>
-                    <h2 class="text-3xl font-bold">{{ $totalGuru ?? 0 }}</h2>
-                </div>
-
-                <div class="bg-purple-500 text-white p-4 rounded-lg shadow">
-                    <p class="text-sm">Total Kelas</p>
-                    <h2 class="text-3xl font-bold">{{ $totalKelas ?? 0 }}</h2>
+            
+            {{-- Welcome Card --}}
+            <div class="bg-navy rounded-2xl shadow-lg p-6 mb-8 text-white">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-white">Halo, {{ auth()->user()->name }}! 👋</h3>
+                        <p class="text-baby-blue mt-1">Selamat datang di dashboard administrator</p>
+                    </div>
+                    <div class="text-6xl">🎓</div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                <a href="{{ route('admin.siswa') }}" class="bg-blue-100 p-4 rounded-lg text-center hover:bg-blue-200">
-                    📋 Manajemen Siswa
-                </a>
-                <a href="{{ route('admin.guru') }}" class="bg-green-100 p-4 rounded-lg text-center hover:bg-green-200">
-                    👨‍🏫 Manajemen Guru
-                </a>
-                <a href="{{ route('admin.kelas') }}" class="bg-purple-100 p-4 rounded-lg text-center hover:bg-purple-200">
-                    🏫 Manajemen Kelas
-                </a>
+            {{-- Stats Cards --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-2xl shadow-md p-6 border-l-4 border-baby-blue card-hover transition-smooth">
+                    <p class="text-gray-500 text-sm">Total Siswa</p>
+                    <p class="text-3xl font-bold text-navy">{{ number_format($totalSiswa) }}</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-6 border-l-4 border-baby-blue card-hover transition-smooth">
+                    <p class="text-gray-500 text-sm">Total Guru</p>
+                    <p class="text-3xl font-bold text-navy">{{ number_format($totalGuru) }}</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-6 border-l-4 border-baby-blue card-hover transition-smooth">
+                    <p class="text-gray-500 text-sm">Total Kelas</p>
+                    <p class="text-3xl font-bold text-navy">{{ number_format($totalKelas) }}</p>
+                </div>
+                <div class="bg-white rounded-2xl shadow-md p-6 border-l-4 border-baby-blue card-hover transition-smooth">
+                    <p class="text-gray-500 text-sm">Kehadiran Hari Ini</p>
+                    <p class="text-3xl font-bold text-navy">{{ $persenKehadiran }}%</p>
+                    <div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div class="bg-baby-blue h-2 rounded-full" style="width: {{ $persenKehadiran }}%"></div></div>
+                </div>
+            </div>
+
+            {{-- Quick Menu --}}
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="{{ route('admin.siswa') }}" class="bg-navy hover:bg-opacity-90 text-white p-4 rounded-xl text-center transition-smooth transform hover:scale-105 shadow-md font-semibold">👨‍🎓 Kelola Siswa</a>
+                <a href="{{ route('admin.guru') }}" class="bg-navy hover:bg-opacity-90 text-white p-4 rounded-xl text-center transition-smooth transform hover:scale-105 shadow-md font-semibold">👨‍🏫 Kelola Guru</a>
+                <a href="{{ route('admin.kelas') }}" class="bg-navy hover:bg-opacity-90 text-white p-4 rounded-xl text-center transition-smooth transform hover:scale-105 shadow-md font-semibold">🏫 Kelola Kelas</a>
+                <a href="{{ route('admin.jadwal') }}" class="bg-navy hover:bg-opacity-90 text-white p-4 rounded-xl text-center transition-smooth transform hover:scale-105 shadow-md font-semibold">📅 Kelola Jadwal</a>
             </div>
         </div>
     </div>
